@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct LangDTO: Codable {
-    let data: [LangData]
+public struct LangDTO: Codable {
+    public let data: [LangData]
 
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case data = "data"
     }
 }
@@ -51,7 +51,7 @@ extension LangDTO {
 }
 
 // MARK: - Datum
-struct LangData: Codable {
+public struct LangData: Codable {
     let id: String
     let locale: Locale
 

@@ -7,8 +7,8 @@
 
 import Foundation
 
-final class LangClass {
-    static let shared = LangClass()
+final public class LangClass {
+    public static let shared = LangClass()
     
     private init() { }
     
@@ -16,7 +16,7 @@ final class LangClass {
     
     private var langs: [String]?
     
-    func langs(project: String, server: String?) {
+    public func langs(project: String, server: String?) {
         
         let semaphore = DispatchSemaphore(value: 0)
         
@@ -49,7 +49,7 @@ final class LangClass {
         semaphore.wait()
     }
     
-    func download(server: String?, project: String, language: String, output: String, fileName: String, label: String? = nil) {
+    public func download(server: String?, project: String, language: String, output: String, fileName: String, label: String? = nil) {
         let semaphore = DispatchSemaphore(value: 0)
         
         var components = URLComponents(string: "\(Constants.ws.getBaseUrl(server: server))\(Constants.ws.downloadLang(project: project, language: language, label: label))")!
@@ -147,7 +147,7 @@ final class LangClass {
         return lineFinal
     }
     
-    func getAllLangs() -> [String]? {
+    public func getAllLangs() -> [String]? {
         langs
     }
     

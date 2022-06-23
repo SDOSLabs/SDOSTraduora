@@ -7,14 +7,14 @@
 
 import Foundation
 
-final class AuthClass {
-    static let shared = AuthClass()
+final public class AuthClass {
+    public static let shared = AuthClass()
     
     private init() { }
     
     private var authObject: AuthDTO?
     
-    func auth(_ form: AuthObject, server: String?) {
+    public func auth(_ form: AuthObject, server: String?) {
         
         guard let parameters = try? form.jsonData() else { return }
         
@@ -28,6 +28,7 @@ final class AuthClass {
             Constants.ws.headers.contentType: Constants.ws.headers.value.json
         ]
         request.httpBody = parameters
+        print("\(Constants.ws.getBaseUrl(server: server))\(Constants.ws.auth)")
         
         let session = URLSession.shared
         let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
