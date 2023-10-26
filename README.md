@@ -12,7 +12,7 @@
 - Changelog: https://github.com/SDOSLabs/SDOSTraduora/blob/master/CHANGELOG.md
 
 ## Introducción
-SDOSTraduora es un script que genera los ficheros `.strings` a partir de un proyecto creado en un portal derivado de https://github.com/ever-co/ever-traduora. Esta plataforma permite definir los strings de un proyecto en varios idiomas y permite su acceso a través de API, por lo que puede ser usada para aplicaicones iOS y Android.
+SDOSTraduora es un script que genera los ficheros `.strings` a partir de un proyecto creado en un portal derivado de https://github.com/ever-co/ever-traduora. Esta plataforma permite definir los strings de un proyecto en varios idiomas y permite su acceso a través de API, por lo que puede ser usada para aplicaciones iOS y Android.
 
 ## Instalación
 

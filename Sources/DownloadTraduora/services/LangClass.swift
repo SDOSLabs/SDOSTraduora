@@ -16,12 +16,12 @@ final public class LangClass {
     
     private var langs: [String]?
     
-    public func langs(project: String, server: String?) {
+    public func langs(project: String, server: String?) throws {
         
         let semaphore = DispatchSemaphore(value: 0)
         
         let request = NSMutableURLRequest(url: URL(string: "\(Constants.ws.getBaseUrl(server: server))\(Constants.ws.langs(project: project))")!,
-                                          cachePolicy: .useProtocolCachePolicy,
+                                          cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
                                           timeoutInterval: 15.0)
         request.httpMethod = Constants.ws.method.GET
         request.allHTTPHeaderFields = [
@@ -29,16 +29,24 @@ final public class LangClass {
             Constants.ws.headers.authorization: AuthClass.shared.bearer()
         ]
         
-        let session = URLSession.shared
+        var errorWS: Error? = nil
+        let session = Constants.session
         let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
             guard error == nil, let data = data else {
                 print("[SDOSTraduora] Error al recuperar los lenguajes de las traducciones. Error: \(error!.localizedDescription)")
+                errorWS = TraduoraError.langRequest(error!)
                 semaphore.signal()
-                exit(11)
+                return
             }
             
             if let lang = try? LangDTO(data: data) {
+                print("[SDOSTraduora] Success request \(request.url?.absoluteString ?? "")")
+                print(String(data: data, encoding: .utf8) ?? "")
                 self.langs = lang.data.map { $0.locale.code }
+            } else {
+                print("[SDOSTraduora] Failed request \(request.url?.absoluteString ?? "")")
+                print(String(data: data, encoding: .utf8) ?? "")
+                errorWS = TraduoraError.langRequestInvalidResponseData
             }
             
             semaphore.signal()
@@ -47,10 +55,15 @@ final public class LangClass {
         dataTask.resume()
         
         semaphore.wait()
+        
+        if let errorWS {
+            throw errorWS
+        }
     }
     
-    public func download(server: String?, project: String, language: String, output: String, fileName: String, label: String? = nil) {
+    public func download(server: String?, project: String, language: String, output: String, fileName: String, label: String? = nil) throws {
         let semaphore = DispatchSemaphore(value: 0)
+        var errorWS: Error? = nil
         
         var components = URLComponents(string: "\(Constants.ws.getBaseUrl(server: server))\(Constants.ws.downloadLang(project: project, language: language, label: label))")!
 
@@ -62,21 +75,23 @@ final public class LangClass {
         components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         
         let request = NSMutableURLRequest(url: components.url!,
-                                          cachePolicy: .useProtocolCachePolicy,
+                                          cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
                                           timeoutInterval: 15.0)
         request.httpMethod = Constants.ws.method.GET
         request.allHTTPHeaderFields = [
             Constants.ws.headers.contentType: Constants.ws.headers.value.octet,
             Constants.ws.headers.authorization: AuthClass.shared.bearer()
         ]
-        let session = URLSession.shared
+        let session = Constants.session
         let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
             guard error == nil, let data = data else {
-                print("[SDOSTraduora] Error al recuperar las traducciones. Error: \(error!.localizedDescription)")
+                errorWS = TraduoraError.downloadLangRequest(error!)
                 semaphore.signal()
-                exit(10)
+                return
             }
             if let items = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: String] {
+                print("[SDOSTraduora] Success request \(request.url?.absoluteString ?? "")")
+                print(String(data: data, encoding: .utf8) ?? "")
                 let directoryName = "\(output)/\(language.split(separator: "_").first!).lproj"
                 print("[SDOSTraduora] Generando fichero para el idioma \(language)")
                 
@@ -92,8 +107,9 @@ final public class LangClass {
                     do {
                         try fileManager.createDirectory(atPath: directoryName, withIntermediateDirectories: true, attributes: nil)
                     } catch {
-                        print("[SDOSTraduora] Error al crear la carpeta para las traduciones \(directoryName). Error: \(error)")
-                        exit(12)
+                        errorWS = TraduoraError.downloadLangCreateFolders(directoryName, error)
+                        semaphore.signal()
+                        return
                     }
                 }
                 
@@ -116,12 +132,12 @@ final public class LangClass {
                 }
                 print("[SDOSTraduora] Fichero generado para el idioma \(language) en \(filePath)")
             } else {
-                if let json = String(data: data, encoding: .utf8) {
-                    print("[SDOSTraduora] Error al parsear el JSON para el idioma \(language). JSON: \(json)")
-                } else {
-                    print("[SDOSTraduora] Error al parsear el JSON para el idioma \(language)")
-                }
-                    exit(13)
+                print("[SDOSTraduora] Failed request \(request.url?.absoluteString ?? "")")
+                print(String(data: data, encoding: .utf8) ?? "")
+                let json = String(data: data, encoding: .utf8)
+                errorWS = TraduoraError.downloadLangParser(language, json)
+                semaphore.signal()
+                return
             }
             semaphore.signal()
             
@@ -131,6 +147,10 @@ final public class LangClass {
         
         
         semaphore.wait()
+        
+        if let errorWS {
+            throw errorWS
+        }
     }
     
     func formatLine(_ line: String) -> String {

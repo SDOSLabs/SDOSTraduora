@@ -18,35 +18,35 @@ struct SDOSTraduora: ParsableCommand {
     var langs: [String] = [String]()
     
     mutating func run() throws {
-        auth()
-        getLangs()
+        try auth()
+        try getLangs()
         
-        langs.forEach {
-            downloadLang(language: $0)
+        try langs.forEach {
+            try downloadLang(language: $0)
         }
     }
     
-    func downloadLang(language: String) {
+    func downloadLang(language: String) throws {
         print("[SDOSTraduora] Descargando idioma \(language)...")
-        LangClass.shared.download(server: server, project: self.projectId, language: language, output: self.output, fileName: outputFileName, label: self.label)
+        try LangClass.shared.download(server: server, project: self.projectId, language: language, output: self.output, fileName: outputFileName, label: self.label)
     }
     
-    mutating func getLangs() {
+    mutating func getLangs() throws {
         if let lang = lang {
             self.langs = lang.components(separatedBy: ";")
         }
         
         if self.langs.count == 0 {
-            LangClass.shared.langs(project: projectId, server: server)
+            try LangClass.shared.langs(project: projectId, server: server)
             if let langs = LangClass.shared.getAllLangs() {
                 self.langs = langs
             }
         }
     }
     
-    mutating func auth() {
+    mutating func auth() throws {
         authObject = AuthObject(clientID: clientId, clientSecret: clientSecret)
-        AuthClass.shared.auth(authObject, server: server)
+        try AuthClass.shared.auth(authObject, server: server)
     }
     
 }

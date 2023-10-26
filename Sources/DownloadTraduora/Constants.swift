@@ -8,6 +8,17 @@
 import Foundation
 
 struct Constants {
+    static let session: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpCookieAcceptPolicy = .always
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 15
+        configuration.waitsForConnectivity = true
+        configuration.httpMaximumConnectionsPerHost = 10
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.urlCache = .none
+        return URLSession(configuration: configuration)
+    }()
     struct ws {
         private static let _baseUrl = "traduora.sdos.es"
         

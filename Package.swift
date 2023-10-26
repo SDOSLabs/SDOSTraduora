@@ -5,8 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "SDOSTraduora",
+    platforms: [.iOS(.v14)],
     products: [
-        .plugin(name: "Traduora", targets: ["Traduora"])
+        .executable(name: "SDOSTraduora", targets: ["SDOSTraduora"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -24,15 +25,6 @@ let package = Package(
             dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser")]),
         .testTarget(
             name: "SDOSTraduoraTests",
-            dependencies: ["SDOSTraduora"]),
-        .plugin(name: "Traduora",
-                capability:
-                .command(
-                    intent: .custom(verb: "generate-localizable-strings",
-                                    description: "SDOSTraduora es un script que genera los ficheros `.strings` a partir de un proyecto creado en un portal derivado de https://github.com/ever-co/ever-traduora. Esta plataforma permite definir los strings de un proyecto en varios idiomas y permite su acceso a través de API, por lo que puede ser usada para aplicaicones iOS y Android."),
-                    permissions: [.writeToPackageDirectory(reason: "Generación de strings")]),
-                dependencies: ["SDOSTraduora"]
-               )
-//            .plugin(name: "Traduora", capability: .buildTool(), dependencies: ["SDOSTraduora"])
+            dependencies: ["SDOSTraduora"])
     ]
 )
