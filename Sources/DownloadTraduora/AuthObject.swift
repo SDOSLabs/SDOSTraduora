@@ -7,17 +7,22 @@
 
 import Foundation
 // MARK: - AuthObject
-struct AuthObject: Codable {
-    var grantType: String = "client_credentials" //Need this value hardoced
-    var username: String = "ios@alten.es" //Need this value hardoced
-    var password: String = "-------------"
-    let clientID: String
-    let clientSecret: String
+public struct AuthObject: Codable {
+    public var grantType: String = "client_credentials" //Need this value hardoced
+    public var username: String = "ios@alten.es" //Need this value hardoced
+    public var password: String = "-------------"
+    public let clientID: String
+    public let clientSecret: String
 
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case grantType = "grant_type"
         case clientID = "client_id"
         case clientSecret = "client_secret"
+    }
+    
+    public init(clientID: String, clientSecret: String) {
+        self.clientID = clientID
+        self.clientSecret = clientSecret
     }
 }
 
