@@ -1,6 +1,7 @@
 import XCTest
 import class Foundation.Bundle
 @testable import SDOSTraduora
+@testable import DownloadTraduora
 
 final class SDOSTraduoraTests: XCTestCase {
     func testFormatLine() {
