@@ -92,7 +92,7 @@ final public class LangClass {
             if let items = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: String] {
                 print("[SDOSTraduora] Success request \(request.url?.absoluteString ?? "")")
                 print(String(data: data, encoding: .utf8) ?? "")
-                let directoryName = "\(output)/\(language.split(separator: "_").first!).lproj"
+                let directoryName = "\(output)/\(language).lproj"
                 print("[SDOSTraduora] Generando fichero para el idioma \(language)")
                 
                 let fileManager = FileManager.default
