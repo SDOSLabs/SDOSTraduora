@@ -328,3 +328,7 @@ Al llamar al script SDOSTraduora podemos usar los siguientes parámetros
 |`--server [valor]`|[x]|Dominio del servidor de traduora donde se deberá conectar para realizar la descarga de los ficheros|`traduora.myinstance.com`|
 |`--output-path [valor]`|[x]|Carpeta de destino donde se descargaran las traduciones de traduora|`${SRCROOT}/main/resources/generated`|
 |`--output-file-name [valor]`|[x]|Nombre de los ficheros descargados desde traduora|`Localizable.generated.strings`|
+
+## License
+
+**SDOSTraduora** is licensed under the [MIT License](./LICENSE.md).
